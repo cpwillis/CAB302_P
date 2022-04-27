@@ -1,10 +1,11 @@
 package MazeDesignTool;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Maze {
+public class Maze extends JFrame {
 
     private int id;
     private int width;
@@ -27,19 +28,9 @@ public class Maze {
         SimpleDateFormat dt = new SimpleDateFormat("dd/MM HH:mm"); //https://stackabuse.com/how-to-get-current-date-and-time-in-java/
         this.windowName = MessageFormat.format("{0} | {1} by {2} (Created: {3}, Last Modified: {4})",
                 String.format("%03d", id), title, author, dt.format(created), dt.format(modified));
-        this.gridArray = new int[][]{ // Hardcoded for Testing (0=Path, 1=Wall, 2=Start, 3=Finish)
-                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                {1, 2, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1},
-                {1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1},
-                {1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1},
-                {1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1},
-                {1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1},
-                {1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1},
-                {1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 1},
-                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+        // this.gridArray = abc;
     }
 
     // todo: object for creating 2d array
-
 }
+

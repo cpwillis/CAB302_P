@@ -12,17 +12,6 @@ public class GUI extends JFrame implements ActionListener {
     public static final int height = 700;
     JMenuItem mNew, mOpen, mSave, mExit, mImportImage, mHowTo, mAbout;
     JFrame masterWindow = new JFrame("Maze Design Tool (Group_282)");
-    private final int [][] defaultMaze = { // Hardcoded for Testing (0=Path, 1=Wall, 2=Start, 3=Finish)
-            {1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,2,1,0,1,0,1,0,0,0,0,0,1},
-            {1,0,1,0,0,0,1,0,1,1,1,0,1},
-            {1,0,0,0,1,1,1,0,0,0,0,0,1},
-            {1,0,1,0,0,0,0,0,1,1,1,0,1},
-            {1,0,1,0,1,1,1,0,1,0,0,0,1},
-            {1,0,1,0,1,0,0,0,1,1,1,0,1},
-            {1,0,1,0,1,1,1,0,1,0,1,0,1},
-            {1,0,0,0,0,0,0,0,0,0,1,3,1},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1}};
 
     private void initFrame() {
         masterWindow.setLayout(new BorderLayout());
@@ -92,34 +81,12 @@ public class GUI extends JFrame implements ActionListener {
         JInternalFrame slaveWindow = new JInternalFrame(currentMaze.getWindowName()); // Sits Inside masterWindow
         slaveWindow.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         slaveWindow.setLayout(new BorderLayout());
-        slaveWindow.add(new JLabel("If you see me, maze didn't paint.")); //TESTER
         slaveWindow.setClosable(true);
         slaveWindow.setVisible(true);
-
+        slaveWindow.add(new JLabel("If you see me, maze didn't paint.")); //TESTER
+        slaveWindow.add(new DrawMaze()); // todo: draw maze
         masterWindow.getContentPane().add(slaveWindow, BorderLayout.CENTER);
         masterWindow.revalidate();
-
-
-        // todo: draw maze
-
-    }
-
-    @Override public void paint(Graphics g) {
-        super.paint(g);
-        for (int row = 0; row < defaultMaze.length; row++) {
-            for (int col = 0; col < defaultMaze[0].length; col++) {
-                Color color = switch (defaultMaze[row][col]) {
-                    case 1 -> Color.BLACK;
-                    case 2 -> Color.BLUE;
-                    case 3 -> Color.RED;
-                    default -> Color.WHITE;
-                };
-                g.setColor(color);
-                g.fillRect(30 * col, 30 * row, 30, 30);
-                g.setColor(Color.BLACK);
-                g.drawRect(30 * col, 30 * row, 30, 30);
-            }
-        }
     }
 
     @Override public void actionPerformed(ActionEvent e) {
@@ -135,6 +102,5 @@ public class GUI extends JFrame implements ActionListener {
 
     public void run() {
         initFrame();
-        createMaze();
     }
 }
