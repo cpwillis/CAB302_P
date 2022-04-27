@@ -12,7 +12,7 @@ public class GUI extends JFrame implements ActionListener {
     public static final int height = 700;
     JMenuItem mNew, mOpen, mSave, mExit, mImportImage, mHowTo, mAbout;
     JFrame masterWindow = new JFrame("Maze Design Tool (Group_282)");
-    private int [][] defaultMaze = { // Hardcoded for Testing (0=Path, 1=Wall, 2=Start, 3=Finish)
+    private final int [][] defaultMaze = { // Hardcoded for Testing (0=Path, 1=Wall, 2=Start, 3=Finish)
             {1,1,1,1,1,1,1,1,1,1,1,1,1},
             {1,2,1,0,1,0,1,0,0,0,0,0,1},
             {1,0,1,0,0,0,1,0,1,1,1,0,1},
@@ -24,18 +24,14 @@ public class GUI extends JFrame implements ActionListener {
             {1,0,0,0,0,0,0,0,0,0,1,3,1},
             {1,1,1,1,1,1,1,1,1,1,1,1,1}};
 
-    private JFrame initFrame() {
+    private void initFrame() {
         masterWindow.setLayout(new BorderLayout());
         masterWindow.setPreferredSize(new Dimension(width, height));
-
         masterWindow.getContentPane().add(menu(),BorderLayout.NORTH);
-
         masterWindow.setDefaultCloseOperation(EXIT_ON_CLOSE);
         masterWindow.pack();
         masterWindow.setLocationRelativeTo(null);
         masterWindow.setVisible(true);
-
-        return masterWindow;
     }
 
     private JMenuBar menu() {
@@ -83,7 +79,7 @@ public class GUI extends JFrame implements ActionListener {
         // https://www.codejava.net/java-se/swing/show-simple-open-file-dialog-using-jfilechooser
         JFileChooser fileDirectory = new JFileChooser();
         fileDirectory.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = fileDirectory.showOpenDialog(this);
+        fileDirectory.showOpenDialog(this);
     }
 
     private void createMaze() {
@@ -92,38 +88,39 @@ public class GUI extends JFrame implements ActionListener {
         viewMaze(tst);
     }
 
-    private void viewMaze(Maze var) {
-        JInternalFrame slaveWindow = new JInternalFrame(var.getWindow()); // Sits Inside masterWindow
+    private void viewMaze(Maze currentMaze) {
+        JInternalFrame slaveWindow = new JInternalFrame(currentMaze.getWindowName()); // Sits Inside masterWindow
         slaveWindow.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         slaveWindow.setLayout(new BorderLayout());
-        slaveWindow.add(new JLabel("Hello World"), BorderLayout.CENTER);
+        slaveWindow.add(new JLabel("If you see me, maze didn't paint.")); //TESTER
         slaveWindow.setClosable(true);
         slaveWindow.setVisible(true);
 
         masterWindow.getContentPane().add(slaveWindow, BorderLayout.CENTER);
         masterWindow.revalidate();
 
+
         // todo: draw maze
+
     }
 
-//    @Override public void paint(Graphics g) {
-//        super.paint(g);
-//        for (int row = 0; row < defaultMaze.length; row++) {
-//            for (int col = 0; col < defaultMaze[0].length; col++) {
-//                Color color;
-//                switch (defaultMaze[row][col]) {
-//                    case 1 : color = Color.BLACK; break;
-//                    case 2 : color = Color.BLUE; break;
-//                    case 3 : color = Color.RED; break;
-//                    default : color = Color.WHITE;
-//                }
-//                g.setColor(color);
-//                g.fillRect(30 * col, 30 * row, 30, 30);
-//                g.setColor(Color.BLACK);
-//                g.drawRect(30 * col, 30 * row, 30, 30);
-//            }
-//        }
-//    }
+    @Override public void paint(Graphics g) {
+        super.paint(g);
+        for (int row = 0; row < defaultMaze.length; row++) {
+            for (int col = 0; col < defaultMaze[0].length; col++) {
+                Color color = switch (defaultMaze[row][col]) {
+                    case 1 -> Color.BLACK;
+                    case 2 -> Color.BLUE;
+                    case 3 -> Color.RED;
+                    default -> Color.WHITE;
+                };
+                g.setColor(color);
+                g.fillRect(30 * col, 30 * row, 30, 30);
+                g.setColor(Color.BLACK);
+                g.drawRect(30 * col, 30 * row, 30, 30);
+            }
+        }
+    }
 
     @Override public void actionPerformed(ActionEvent e) {
         //todo: menubar actions
