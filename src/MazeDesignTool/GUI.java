@@ -12,7 +12,17 @@ public class GUI extends JFrame implements ActionListener {
     public static final int height = 700;
     JMenuItem mNew, mOpen, mSave, mExit, mImportImage, mHowTo, mAbout;
     JFrame masterWindow = new JFrame("Maze Design Tool (Group_282)");
-    JFrame slaveWindow = new JFrame("replace me"); // Sits Inside masterWindow
+    private int [][] defaultMaze = { // Hardcoded for Testing (0=Path, 1=Wall, 2=Start, 3=Finish)
+            {1,1,1,1,1,1,1,1,1,1,1,1,1},
+            {1,2,1,0,1,0,1,0,0,0,0,0,1},
+            {1,0,1,0,0,0,1,0,1,1,1,0,1},
+            {1,0,0,0,1,1,1,0,0,0,0,0,1},
+            {1,0,1,0,0,0,0,0,1,1,1,0,1},
+            {1,0,1,0,1,1,1,0,1,0,0,0,1},
+            {1,0,1,0,1,0,0,0,1,1,1,0,1},
+            {1,0,1,0,1,1,1,0,1,0,1,0,1},
+            {1,0,0,0,0,0,0,0,0,0,1,3,1},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1}};
 
     private JFrame initFrame() {
         masterWindow.setLayout(new BorderLayout());
@@ -65,6 +75,7 @@ public class GUI extends JFrame implements ActionListener {
         menuBar.add(mEdit);
         menuBar.add(mHelp);
 
+        // Return
         return menuBar;
     }
 
@@ -75,28 +86,58 @@ public class GUI extends JFrame implements ActionListener {
         int result = fileDirectory.showOpenDialog(this);
     }
 
-    public void createMaze() {
-        // todo hardcoded maze
-        // new maze dialogue
-        // create slaveWindow for maze
-        // draw maze
+    private void createMaze() {
+        // todo: maze creation dialogue for user to pick options (e.g. size)
+        Maze tst = new Maze(5,5,"Tester", "Chris");
+        viewMaze(tst);
     }
 
+    private void viewMaze(Maze var) {
+        JInternalFrame slaveWindow = new JInternalFrame(var.getWindow()); // Sits Inside masterWindow
+        slaveWindow.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        slaveWindow.setLayout(new BorderLayout());
+        slaveWindow.add(new JLabel("Hello World"), BorderLayout.CENTER);
+        slaveWindow.setClosable(true);
+        slaveWindow.setVisible(true);
+
+        masterWindow.getContentPane().add(slaveWindow, BorderLayout.CENTER);
+        masterWindow.revalidate();
+
+        // todo: draw maze
+    }
+
+//    @Override public void paint(Graphics g) {
+//        super.paint(g);
+//        for (int row = 0; row < defaultMaze.length; row++) {
+//            for (int col = 0; col < defaultMaze[0].length; col++) {
+//                Color color;
+//                switch (defaultMaze[row][col]) {
+//                    case 1 : color = Color.BLACK; break;
+//                    case 2 : color = Color.BLUE; break;
+//                    case 3 : color = Color.RED; break;
+//                    default : color = Color.WHITE;
+//                }
+//                g.setColor(color);
+//                g.fillRect(30 * col, 30 * row, 30, 30);
+//                g.setColor(Color.BLACK);
+//                g.drawRect(30 * col, 30 * row, 30, 30);
+//            }
+//        }
+//    }
+
     @Override public void actionPerformed(ActionEvent e) {
+        //todo: menubar actions
         if (e.getSource() == mNew) { createMaze(); }
         if (e.getSource() == mOpen) { fileDirectory(); }
         if (e.getSource() == mSave) { fileDirectory(); }
         if (e.getSource() == mExit) { System.exit(0); }
-        if (e.getSource() == mImportImage) {  }
-        if (e.getSource() == mHowTo) {
-            // what it does/how
-        }
-        if (e.getSource() == mAbout) {
-            // project name/course/year, team members
-        }
+        if (e.getSource() == mImportImage) { } // start and finish images
+        if (e.getSource() == mHowTo) { } // what it does/how
+        if (e.getSource() == mAbout) { } // project name/course/year, team members
     }
 
     public void run() {
         initFrame();
+        createMaze();
     }
 }

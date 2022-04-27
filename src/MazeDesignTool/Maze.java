@@ -2,87 +2,46 @@ package MazeDesignTool;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Maze {
-    private String mazeName;
+
+    private int id;
+    private int width;
+    private int height;
+    private String title;
     private String author;
-    private int gridRow;
-    private int gridCol;
-    private Date dateTimeCreated;
-    private Date dateTimeLastEdited;
-    private int mazeID;
+    private Date created;
+    private Date modified;
+    public String window; public String getWindow() { return window; }
+    public int [][] gridArray;
 
-    public static String ToString(Date d) {
-
-
-        return d.toString();
+    public Maze(int width, int height, String title, String author) {
+        this.id = 1;
+        this.width = width;
+        this.height = height;
+        this.title = title;
+        this.author = author;
+        if (this.created == null) { this.created = new Date(); }
+        this.modified = new Date();
+        SimpleDateFormat dt = new SimpleDateFormat("dd/MM HH:mm"); //https://stackabuse.com/how-to-get-current-date-and-time-in-java/
+        this.window = MessageFormat.format("{0} | {1} by {2} (Created: {3}, Last Modified: {4})",
+                String.format("%03d", id), title, author, dt.format(created), dt.format(modified));
+        this.gridArray = new int[][]{ // Hardcoded for Testing (0=Path, 1=Wall, 2=Start, 3=Finish)
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                {1, 2, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1},
+                {1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1},
+                {1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1},
+                {1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1},
+                {1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1},
+                {1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1},
+                {1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 1},
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
     }
 
-}
-
-
-public class MazePage extends BorderPage {
-    private static final int gridRow = 3;
-    private static final int gridCol = 3;
-    private static final int gridSize = gridRow * gridCol;
-    private final JPanel[] gridPanels;
-    private final Color[] backgroundColours = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.WHITE};
-    private final int[] backgroundBoundaries = {100, 100, 100, 100, 0};
-    private final JPanel[] backgroundPanels;
-    Color[] gridColours = {Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK, Color.WHITE};
-    int[] gridBoundaries = {2, 2, 2, 2, 0};
-    private JPanel[] panelsGrid = new JPanel[5];
-
-
-    public MazePage() {
-
-
-        super("Maze");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
-
-
-        backgroundPanels = BorderPanel.setBorderPanel(backgroundColours, backgroundBoundaries);
-
-        super.borderPanelPos(backgroundPanels);
-
-        backgroundPanels[4].setLayout(new GridLayout(gridRow, gridCol));
-
-
-        gridPanels = new JPanel[gridSize];
-
-        for (int i = 0; i < gridSize; i++) {
-            gridPanels[i] = createTable(i);
-            backgroundPanels[4].add(gridPanels[i]);
-        }
-
-
-        // Display the window.
-        super.setWindow();
-    }
-
-    public static void main(String[] args) {
-        new MazePage();
-
-
-    }
-
-    private JPanel createTable(int i) {
-        JPanel panelGrid = new JPanel(new BorderLayout());
-
-
-        panelsGrid = BorderPanel.setBorderPanel(gridColours, gridBoundaries);
-        panelGrid = BorderPanel.borderPanelPos(panelGrid, panelsGrid);
-
-        contentGridPanel(panelsGrid[4]);
-
-        return panelGrid;
-    }
-
-    public void contentGridPanel(JPanel panel) {
-        panel.add(new JLabel("Label 1"));
-
-    }
+    // todo: object for creating 2d array
 
 }
