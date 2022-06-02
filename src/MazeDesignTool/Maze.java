@@ -3,6 +3,7 @@ package MazeDesignTool;
 import javax.swing.*;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Maze extends JFrame {
@@ -32,5 +33,15 @@ public class Maze extends JFrame {
     }
 
     // todo: object for creating 2d array
+
+    public void generateRandomMaze(){
+        //Modify gridArray
+    }
+
+    public ArrayList<String> mazeSolution(){
+        //return a ArrayList of instructions as strings to get from beginning to end, if there is no solution return
+        //null
+        return null;
+    }
 }
 
