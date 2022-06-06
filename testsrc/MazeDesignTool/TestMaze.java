@@ -2,12 +2,15 @@ package MazeDesignTool;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
+
+import java.awt.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestMaze {
     int[] max_maze_dimensions ={100,100};
-    int[] min_maze_dimensions = {6,2};
+    int[] min_maze_dimensions = {5,5};
     Maze[] test_mazes = new Maze[3];
     @BeforeEach
     void setup(){
@@ -35,11 +38,12 @@ public class TestMaze {
     }
     @Test
     void testRandomMazeHasOneEntranceOneExit(){ //According to spec maze must one entrance and exit
-        //Generate a number of random mazes
+
         for(Maze maze: test_mazes){
             maze.generateRandomMaze();
         }
         //Test that randomly generated maze has only one entrance and exit
+
         int number_of_entrances=0;
         int number_of_exits = 0;
         for(Maze maze: test_mazes){
@@ -55,7 +59,7 @@ public class TestMaze {
             }
             assertEquals(1,number_of_entrances, String.format("More or less than one entrance in randomly" +
                     " generated %dx%d maze.",maze.getWidth(), maze.getHeight()));
-            assertEquals(1,number_of_entrances, String.format("More or less than one exit in randomly" +
+            assertEquals(1,number_of_exits, String.format("More or less than one exit in randomly" +
                     " generated %dx%d maze.",maze.getWidth(), maze.getHeight()));
             number_of_entrances=0;
             number_of_exits=0;
@@ -88,8 +92,26 @@ public class TestMaze {
         }
         //Test that test mazes are solvable
         for(Maze maze: test_mazes) {
-            assertNotEquals(maze.mazeSolution(), null,String.format("Randomly generated %dx%d maze was not solvable",
+            assertNotEquals(maze.generate_solution(new Point(0,1),new Point( maze.getHeight()-1,maze.getWidth()-2)), null,String.format("Randomly generated %dx%d maze was not solvable",
                     maze.getWidth(),maze.getHeight()));
         }
+    }
+    @Test
+    void testDeadEndCell(){
+        //For the minimum sized maze, 5x5, there can only be one dead end cell and there must always be 7 cells
+        test_mazes[1].generateRandomMaze();
+        double deadCells = test_mazes[1].percentDeadEndCells();
+        double tol = Math.pow(1,-10);
+        assertTrue(Math.abs((double)100/7-deadCells)<tol,"The percent of dead cells for a 5x5 maze" +
+                " is incorrect.");
+    }
+    @Test
+    void testPercentCellsReachedInSolution(){
+        //For the minimum sized maze, 5x5, the optimal solution visits 5 cells
+        test_mazes[1].generateRandomMaze();
+        double reachedCells = test_mazes[1].percentCellsReachedInSolution();
+        double tol = Math.pow(1,-10);
+        assertTrue(Math.abs((double)500/7-reachedCells)<tol,"The percent of visited cells in an optimal" +
+                " solution for a 5x5 maze is incorrect.");
     }
 }
