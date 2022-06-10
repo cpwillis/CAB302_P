@@ -40,7 +40,7 @@ public class TestMaze {
     void testRandomMazeHasOneEntranceOneExit(){ //According to spec maze must one entrance and exit
 
         for(Maze maze: test_mazes){
-            maze.generateRandomMaze();
+            maze.generateRandomMaze(false,null);
         }
         //Test that randomly generated maze has only one entrance and exit
 
@@ -69,7 +69,7 @@ public class TestMaze {
     void testRandomMazeIsEnclosed(){ //According to spec maze be surrounded by wall except entrance and exit
         //Generate a number of random mazes
         for(Maze maze: test_mazes){
-            maze.generateRandomMaze();
+            maze.generateRandomMaze(false,null);
         }
         //Test that randomly generated maze has only one entrance and exit
         for(Maze maze: test_mazes){
@@ -88,18 +88,18 @@ public class TestMaze {
     void testRandomMazeIsSolvable(){
         //Generate a number of random mazes
         for(Maze maze: test_mazes){
-            maze.generateRandomMaze();
+            maze.generateRandomMaze(false,null);
         }
         //Test that test mazes are solvable
         for(Maze maze: test_mazes) {
-            assertNotEquals(maze.generate_solution(new Point(0,1),new Point( maze.getHeight()-1,maze.getWidth()-2)), null,String.format("Randomly generated %dx%d maze was not solvable",
+            assertNotEquals(maze.generateSolution(new Point(0,1),new Point( maze.getHeight()-1,maze.getWidth()-2)), null,String.format("Randomly generated %dx%d maze was not solvable",
                     maze.getWidth(),maze.getHeight()));
         }
     }
     @Test
     void testDeadEndCell(){
         //For the minimum sized maze, 5x5, there can only be one dead end cell and there must always be 7 cells
-        test_mazes[1].generateRandomMaze();
+        test_mazes[1].generateRandomMaze(false,null);
         double deadCells = test_mazes[1].percentDeadEndCells();
         double tol = Math.pow(1,-10);
         assertTrue(Math.abs((double)100/7-deadCells)<tol,"The percent of dead cells for a 5x5 maze" +
@@ -108,7 +108,7 @@ public class TestMaze {
     @Test
     void testPercentCellsReachedInSolution(){
         //For the minimum sized maze, 5x5, the optimal solution visits 5 cells
-        test_mazes[1].generateRandomMaze();
+        test_mazes[1].generateRandomMaze(false,null);
         double reachedCells = test_mazes[1].percentCellsReachedInSolution();
         double tol = Math.pow(1,-10);
         assertTrue(Math.abs((double)500/7-reachedCells)<tol,"The percent of visited cells in an optimal" +

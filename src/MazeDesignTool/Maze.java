@@ -53,7 +53,7 @@ public class Maze extends JFrame {
 
 
     // todo: object for creating 2d array
-    private ArrayList<Point> get_random_neighbours(Point node, int width, int height) {
+    private ArrayList<Point> getRandomNeighbours(Point node, int width, int height) {
         ArrayList<Point> neighbours = new ArrayList<>(4);
         if (node.x != height - 1) {
             neighbours.add(new Point(node.x + 1, node.y)); // Down one
@@ -71,20 +71,20 @@ public class Maze extends JFrame {
         return neighbours;
     }
 
-    public List<Point> generate_solution(Point start_point, Point desired_point) {
+    public List<Point> generateSolution(Point startPoint, Point desiredPoint) {
         Queue<List<Point>> nodes = new LinkedList<>();
         boolean[] visited = new boolean[width * height];
         Arrays.fill(visited, false);
         List<Point> path = new ArrayList<>();
-        path.add(start_point);
+        path.add(startPoint);
         nodes.offer(path);
-        visited[start_point.x * width + start_point.y] = true;
+        visited[startPoint.x * width + startPoint.y] = true;
         while (!nodes.isEmpty()) {
             path = nodes.poll();
-            if (path.get(path.size() - 1).equals(desired_point)) {
+            if (path.get(path.size() - 1).equals(desiredPoint)) {
                 return path;
             }
-            for (Point n : get_random_neighbours(path.get(path.size() - 1), width, height)) {
+            for (Point n : getRandomNeighbours(path.get(path.size() - 1), width, height)) {
                 if (!visited[n.x * width + n.y] && gridArray[n.x][n.y] != 1) {
                     List<Point> newPath = new ArrayList<>(path);
                     newPath.add(n);
@@ -96,16 +96,16 @@ public class Maze extends JFrame {
         return null;
     }
 
-
-    public void generateRandomMaze() {
-        int width_thin = width / 2;
-        int height_thin = height / 2;
+    public void generateRandomMaze(boolean startEndImages, ArrayList<Point> logos) {
+        int widthThin = width / 2;
+        int heightThin = height / 2;
         if (width % 2 == 0) {
-            --width_thin;
+            --widthThin;
         }
         if (height % 2 == 0) {
-            --height_thin;
+            --heightThin;
         }
+        //Create grid
         for (int row = 0; row != height; ++row) {
             for (int column = 0; column != width; ++column) {
                 if (row == 0 || row == height - 1 || column == 0 || column == width - 1) {
@@ -116,58 +116,73 @@ public class Maze extends JFrame {
                 }
             }
         }
-        gridArray[0][1] = 2; //Add entrance
-        Point prevPoint = new Point();
-        boolean[] visited = new boolean[width_thin * height_thin];
-        Arrays.fill(visited, false);
         Stack<Point> nodes = new Stack<>();
+        boolean[] visited = new boolean[widthThin * heightThin];
+        Arrays.fill(visited, false);
         nodes.push(new Point(0, 0));
         visited[0] = true;
-        boolean hasNeighbour;
-        ArrayList<Point> disconnected = new ArrayList<>();
+        if(logos!=null){
+            int totalRowLength=0;
+            int totalColumnLength=0;
+            for(Point logo : logos) {
+                totalRowLength+=(int) Math.ceil((double) logo.x / 2);
+                totalColumnLength+=(int) Math.ceil((double) logo.y / 2);
+            }
+            int columnSpace =1;
+            if(totalRowLength<=((heightThin-3*(logos.size()-1)))) { //Loosely packed
+                for (Point logo : logos) {
+                    int logoHeight = (int) Math.ceil((double) logo.x / 2);
+                    int logoWidth = (int) Math.ceil((double) logo.y / 2);
+                    int rowSpace = (int) Math.floor(Math.random() * (widthThin - logoWidth -2) + 2);
+                    for (int i = columnSpace; i != logoHeight + columnSpace; ++i) {
+                        for (int j = rowSpace; j != logoWidth + rowSpace; ++j) {
+                            visited[i * widthThin + j] = true;
+                        }
+                    }
+                    columnSpace += 3;
+                }
+            }
+            else{ //Tightly packed
+                int rowSpace = 2;
+                for (Point logo : logos) {
+                    int logoHeight = (int) Math.ceil((double) logo.x / 2);
+                    int logoWidth = (int) Math.ceil((double) logo.y / 2);
+                    if(rowSpace>=widthThin-3) {
+                        columnSpace += 3;
+                        rowSpace=1;
+                    }
+                    for (int i = columnSpace; i != logoHeight + columnSpace; ++i) {
+                        for (int j = rowSpace; j != logoWidth + rowSpace; ++j) {
+                            visited[i * widthThin + j] = true;
+                        }
+                    }
+                    rowSpace += logoWidth+ 1;
+                }
+            }
+        }
+
         while (!nodes.empty()) {
-            hasNeighbour = false;
-            Point node = nodes.pop();
-            if (!visited[node.x * width_thin + node.y]) {
-                if (node.x == prevPoint.x && node.y == (prevPoint.y + 1)) {
-                    gridArray[2 * prevPoint.x + 1][2 * (prevPoint.y + 1)] = 0;
-                } else if (node.x == (prevPoint.x + 1) && node.y == prevPoint.y) {
-                    gridArray[2 * (prevPoint.x + 1)][2 * prevPoint.y + 1] = 0;
-                } else if (node.x == (prevPoint.x - 1) && node.y == prevPoint.y) {
-                    gridArray[2 * prevPoint.x][2 * prevPoint.y + 1] = 0;
-                } else if (node.x == (prevPoint.x) && node.y == (prevPoint.y - 1)) {
+            Point currentCell = nodes.pop();
+            ArrayList<Point> neighbours = getRandomNeighbours(currentCell, widthThin, heightThin);
+            for (Point chosenCell : neighbours) {
+                if (!visited[chosenCell.x * widthThin + chosenCell.y]) {
+                    nodes.push(currentCell);
+                    if (currentCell.x == chosenCell.x && currentCell.y == (chosenCell.y + 1)) { //Right
+                        gridArray[2 * chosenCell.x + 1][2 * (chosenCell.y + 1)] = 0;
+                    } else if (currentCell.x == (chosenCell.x + 1) && currentCell.y == chosenCell.y) { //Down
+                        gridArray[2 * (chosenCell.x + 1)][2 * chosenCell.y + 1] = 0;
+                    } else if (currentCell.x == (chosenCell.x - 1) && currentCell.y == chosenCell.y) { //Up
+                        gridArray[2 * chosenCell.x][2 * chosenCell.y + 1] = 0;
+                    } else if (currentCell.x == (chosenCell.x) && currentCell.y == (chosenCell.y - 1)) { //Left
 
-                    gridArray[2 * prevPoint.x + 1][2 * prevPoint.y] = 0;
+                        gridArray[2 * chosenCell.x + 1][2 * chosenCell.y] = 0;
+                    }
+                    visited[chosenCell.x * widthThin + chosenCell.y] = true; //Mark chosen cell as visited
+                    nodes.push(chosenCell);
+                    break;
                 }
             }
-            ArrayList<Point> neighbours = get_random_neighbours(node, width_thin, height_thin);
-            for (Point p : neighbours) {
-                if (!visited[p.x * width_thin + p.y]) {
-                    nodes.push(p);
-                    hasNeighbour = true;
-                }
             }
-            if (!hasNeighbour) {
-                disconnected.add((node));
-            }
-
-            visited[node.x * width_thin + node.y] = true;
-            prevPoint = node;
-        }
-        Collections.shuffle(disconnected);
-        for (Point p : disconnected) {
-            if (generate_solution(new Point(2 * p.x + 1, 2 * p.y + 1), new Point(0, 1)) == null) {
-                if (gridArray[2 * p.x][2 * p.y + 1] == 1 && p.x != 0) { //Up
-                    gridArray[2 * p.x][2 * p.y + 1] = 0;
-                } else if (gridArray[2 * p.x + 2][2 * p.y + 1] == 1 && p.x != height_thin - 1) { //down
-                    gridArray[2 * p.x + 2][2 * p.y + 1] = 0;
-                } else if (gridArray[2 * p.x + 1][2 * p.y] == 1 && p.y != 0) { //left
-                    gridArray[2 * p.x + 1][2 * p.y] = 0;
-                } else if (gridArray[2 * p.x + 1][2 * p.y + 2] == 1 && p.y != width_thin - 1) { //right
-                    gridArray[2 * p.x + 1][2 * p.y + 2] = 0;
-                }
-            }
-        }
         if (height % 2 == 0) {
             for (int i = 0; i != width; ++i) {
                 gridArray[height - 2][i] = gridArray[height - 3][i];
@@ -180,8 +195,22 @@ public class Maze extends JFrame {
                 gridArray[i][width - 3] = gridArray[i][width - 4];
             }
         }
-        gridArray[height - 1][width - 2] = 3; //Add exit
-
+        if(startEndImages){
+            for(int i =1; i!= 4; ++i){
+                for(int j =1; j!= 4; ++j){
+                    gridArray[i][j] = 2;
+                }
+            }
+            for(int i =height-4; i!= height-1; ++i){
+                for(int j =width-4; j!= width-1; ++j){
+                    gridArray[i][j] = 2;
+                }
+            }
+        }
+        if(!startEndImages) {
+            gridArray[0][1] = 2; //Add entrance
+            gridArray[height - 1][width - 2] = 3; //Add exit
+        }
     }
 
     public double percentDeadEndCells() {
@@ -202,7 +231,7 @@ public class Maze extends JFrame {
         return ((double) numDeadEndCells / (numCells))*100;
     }
     public double percentCellsReachedInSolution() {
-        List<Point> solution = generate_solution(new Point(1, 0), new Point(height - 1, width - 2));
+        List<Point> solution = generateSolution(new Point(0, 1), new Point(height - 1, width - 2));
         int numCells = 0;
         for (int row = 1; row != height - 1; ++row) {
             for (int column = 1; column != width - 1; ++column) {
