@@ -170,8 +170,6 @@ public class Maze extends JFrame {
             nodes.push(new Point(0, 0));
             visited[0] = true;
 
-
-
         if (startEndImages) {
             visited[widthThin]=true;
             visited[1]=true;
@@ -347,6 +345,39 @@ public class Maze extends JFrame {
             }
         }
         return ((double) (solution.size()-2)/numCells)*100;
+    }
+    public void drawSolution(){
+        Point startPoint = null;
+        Point endPoint = null;
+        List<Point> path = null;
+
+        for(int i=0;i!=height;++i){
+            for(int j=0;j!=width;++j) {
+                if(gridArray[i][j]==2){
+                    startPoint = new Point(i,j);
+                }
+                else if(gridArray[i][j]==3){
+                    endPoint = new Point(i,j);
+                }
+            }
+        }
+        if(startPoint!=null && endPoint!=null){
+            path=generateSolution(startPoint,endPoint);
+        }
+        if(path!=null){
+            for(int i =1; i!=path.size()-1;++i){
+                    gridArray[path.get(i).x][path.get(i).y] = 2;
+            }
+        }
+    }
+    public void hideSolution() {
+        for (int row = 1; row != height - 1; ++row) {
+            for (int column = 1; column != width - 1; ++column) {
+                if (gridArray[row][column] == 2) {
+                    gridArray[row][column] = 0;
+                }
+            }
+        }
     }
 
     public void updateMaze(int x, int y){
