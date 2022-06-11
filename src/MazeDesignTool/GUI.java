@@ -2,8 +2,7 @@ package MazeDesignTool;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.File;
 
 public class GUI extends JFrame implements ActionListener {
@@ -69,14 +68,15 @@ public class GUI extends JFrame implements ActionListener {
         int i = 0;
         GridBagConstraints c = new GridBagConstraints();
         c.weightx = 0.5; c.fill = GridBagConstraints.HORIZONTAL;
+        JTextField[] mazeInputs = new JTextField[4];
         for (String x: MazeProperties) {
             JLabel abc = new JLabel(x+":");
             c.gridx = 0; c.gridy = i;
             MazeDialogue.add(abc, c);
 
-            JTextField def = new JTextField();
+            mazeInputs[i] = new JTextField();
             c.gridwidth = 2; c.ipadx = 60; c.gridx = 1; c.gridy = i;
-            MazeDialogue.add(def, c);
+            MazeDialogue.add(mazeInputs[i], c);
             i++;
         }
         JButton submit = new JButton("Submit");
@@ -84,11 +84,15 @@ public class GUI extends JFrame implements ActionListener {
         MazeDialogue.add(submit, c);
         submit.addActionListener(e -> {
             //todo: use values from dialogue to generate maze
-            Maze HardcodedMaze = new Maze(5,5,"Tester", "Chris"); //TESTER
-            viewMaze(HardcodedMaze);
+            System.out.println(mazeInputs[0].getText());
+            int mazeWidth = Integer.parseInt(mazeInputs[1].getText());
+            int mazeHeight = Integer.parseInt(mazeInputs[2].getText());
+            Maze maze = new Maze(mazeWidth,mazeHeight,mazeInputs[0].getText(), mazeInputs[3].getText());
+            viewMaze(maze);
             MazeDialogue.dispose();
         });
         MazeDialogue.setVisible(true);
+
     }
 
     public void viewMaze(Maze currentMaze) {
@@ -96,9 +100,11 @@ public class GUI extends JFrame implements ActionListener {
         slaveWindow.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         slaveWindow.setLayout(new BorderLayout());
         slaveWindow.setVisible(true);
-        slaveWindow.add(new DrawMaze());
+        slaveWindow.add(new DrawMaze(currentMaze, true,slaveWindow));
         masterWindow.getContentPane().add(slaveWindow);
         masterWindow.revalidate();
+
+
     }
 
     @Override public void actionPerformed(ActionEvent e) {
@@ -110,7 +116,9 @@ public class GUI extends JFrame implements ActionListener {
         if (e.getSource() == mImport) { } // start and finish images
         if (e.getSource() == mHowTo) { } // what it does/how
         if (e.getSource() == mAbout) { } // project name/course/year, team members
+
     }
+
 
     public void run() {
         initFrame();

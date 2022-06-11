@@ -13,6 +13,8 @@ public class Maze extends JFrame {
     private int id;
     private int width;
     private int height;
+    private boolean hasEntrance = true;
+    private boolean hasExit = true;
     private String title;
     private String author;
     private Date created;
@@ -186,8 +188,9 @@ public class Maze extends JFrame {
 
             }
         }
-        try {
+
             if (logos != null) {
+                try {
                 int buffer = 0;
                 if (startEndImages) {
                     buffer = 1;
@@ -236,10 +239,10 @@ public class Maze extends JFrame {
                     }
                 }
             }
-        }
-        catch (ArrayIndexOutOfBoundsException e){
-            throw new MazeCreationException(String.format("Dimension of logo(s) does not fit into a maze of  %dx%d.",
-                    width, height));
+                catch (ArrayIndexOutOfBoundsException e){
+                    throw new MazeCreationException(String.format("Dimension of logo(s) does not fit into a maze of  %dx%d.",
+                            width, height));
+                }
         }
 
 
@@ -344,6 +347,40 @@ public class Maze extends JFrame {
             }
         }
         return ((double) (solution.size()-2)/numCells)*100;
+    }
+
+    public void updateMaze(int x, int y){
+        //System.out.println(String.format("%d, %d", x,y));
+        int row = (int)Math.floor((double)y/30)-1;
+        int column = (int)Math.floor((double)x/30);
+        if(row<=height && column<=width) {
+            if (row == 0 || row == height - 1 || column == 0 || column == width - 1) {
+                if(gridArray[row][column] == 2){
+                    gridArray[row][column] = 1;
+                    hasEntrance =false;
+                }
+                else if(gridArray[row][column] == 3){
+                    gridArray[row][column] = 1;
+                    hasExit = false;
+                }
+                else if(gridArray[row][column] == 1 && !hasEntrance){
+                    gridArray[row][column]=2;
+                    hasEntrance =true;
+                }
+                else if(gridArray[row][column] == 1 && hasEntrance &&!hasExit){
+                    gridArray[row][column] = 3;
+                    hasExit =true;
+                }
+
+            }
+            else {
+                if (gridArray[row][column] == 0) {
+                    gridArray[row][column] = 1;
+                } else if (gridArray[row][column] == 1) {
+                    gridArray[row][column] = 0;
+                }
+            }
+        }
     }
 }
 
