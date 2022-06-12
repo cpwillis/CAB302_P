@@ -7,6 +7,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Initiates user interface for the AddressBook application. All listeners for
@@ -263,10 +265,26 @@ public class MazeDatabaseUI extends JFrame {
          mazeName.setText(string[0]);
          mazeDateAndTime.setText(string[2]);
          mazeLastEditDateAndTime.setText(string[3]);
-         mazeIsSolvable.setText("Always bro, just trust me.");
+         mazeIsSolvable.setText("Yes");
       }
    }
 
+   private Maze loadPressed() throws SQLException {
+      ArrayList<String> arr = data.getArrayMaze();
+      int height = Integer.parseInt(arr.get(0));
+      int width = Integer.parseInt(arr.get(1));
+      int[][] newArr = new int[height][width];
+      for (int i = 0; i != height; ++i) {
+         for (int j = 0; j != width; ++j) {
+            newArr[i][j] = Integer.parseInt(arr.get(i * width + j + 2));
+            System.out.println(newArr[i][j]);
+         }
+      }
+      String[] mazeInfo = data.getMaze((String) nameList.getSelectedValue());
+      Maze maze = new Maze(width, height, mazeInfo[0], mazeInfo[1]);
+
+      return maze;
+   }
    /**
     * Checks size of data/model and enables/disables the delete button
     *
@@ -283,7 +301,11 @@ public class MazeDatabaseUI extends JFrame {
       public void actionPerformed(ActionEvent e) {
          JButton source = (JButton) e.getSource();
          if (source == loadMaze) {
-            newPressed();
+            try {
+               loadPressed();
+            } catch (SQLException ex) {
+               ex.printStackTrace();
+            }
          } else if (source == saveMaze) {
             //savePressed();
          } else if (source == deleteMaze) {
@@ -299,6 +321,16 @@ public class MazeDatabaseUI extends JFrame {
 
       private void deletePressed() {
          int index = nameList.getSelectedIndex();
+         data.remove(nameList.getSelectedValue());
+         clearFields();
+         index--;
+         if (index == -1) {
+            if (data.getSize() != 0) {
+               index = 0;
+            }
+         }
+         nameList.setSelectedIndex(index);
+         checkListSize();
          //remove the maze at index
       }
    }

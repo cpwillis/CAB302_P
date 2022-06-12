@@ -1,15 +1,8 @@
 package MazeDesignTool;
 
 import javax.swing.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.*;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,13 +36,13 @@ public class DB implements MazeDataSource {
 
     private static final String COUNT_ROWS = "SELECT COUNT(*) FROM maze";
 
-    //private static final String INSERT_ARRAY = "INSERT INTO maze";
+    private static final String GET_ARRAYMAZE = "SELECT mazearray FROM maze";
 
     private Connection connection;
 
     private PreparedStatement addMaze;
 
-    private PreparedStatement insertMaze;
+    private PreparedStatement getArrayMaze;
 
     private PreparedStatement getAuthor;
 
@@ -61,6 +54,7 @@ public class DB implements MazeDataSource {
 
     private PreparedStatement rowCount;
 
+
     public DB(){
         connection = DBConnection.getInstance();
         try{
@@ -71,6 +65,7 @@ public class DB implements MazeDataSource {
             getAuthor = connection.prepareStatement(GET_AUTHOR);
             deleteMaze = connection.prepareStatement(DELETE_MAZE);
             getMaze = connection.prepareStatement(GET_MAZE);
+            getArrayMaze = connection.prepareStatement(GET_ARRAYMAZE);
             rowCount = connection.prepareStatement(COUNT_ROWS);
 
         }catch (SQLException ex) {
@@ -97,7 +92,14 @@ public class DB implements MazeDataSource {
         return names;
     }
 
+    public void remove(Object key) {
 
+        // remove from both list and map
+        listModel.removeElement(key);
+
+        //DB mazeData = new DB();
+        deleteMaze((String) key);
+    }
     public void addMaze(Maze m) throws IOException {
         //PreparedStatement statement = connection.prepareStatement("INSERT INTO maze VALUES( mazearray = ?)");
 
@@ -173,6 +175,7 @@ public class DB implements MazeDataSource {
     }
     public String[] getMaze(String name){
         //Maze m = new Maze();
+
         String[] Jeff = new String[4];
         ResultSet rs = null;
 
@@ -194,6 +197,38 @@ public class DB implements MazeDataSource {
         return Jeff;
     }
 
+    public ArrayList<String> getArrayMaze() throws SQLException {
+        //byte[] gabagool;
+        ArrayList<String> arrayList = new ArrayList<>();
+        //String[] string;
+        //Statement statement = connection.createStatement();
+        ResultSet rs = getArrayMaze.executeQuery();
+        try{
+            while (rs.next()) {
+                //Blob blob = rs.getBlob("mazearray");
+                //String Arraymaze = rs.getString("mazearray");
+                //gabagool = blob.getBytes(1, (int) blob.length());
+                byte[] byteArray = rs.getBytes("mazearray");
+
+                ByteArrayInputStream byteStream = new ByteArrayInputStream(byteArray);
+                ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+                arrayList = (ArrayList<String>)objectStream.readObject();
+            }
+            //String[] stringArray = arrayList.toArray(new String[arrayList.size()]);
+            rs.close();
+            //statement.close();
+
+            return arrayList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public int getSize() {
         ResultSet rs = null;
