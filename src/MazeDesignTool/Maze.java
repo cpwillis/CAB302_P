@@ -1,6 +1,5 @@
 package MazeDesignTool;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.text.MessageFormat;
@@ -8,33 +7,26 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
-
 public class Maze extends JFrame {
     private int id;
-    private int width;
-    private int height;
+    private int width; public int getWidth() {return width;}
+    private int height; public int getHeight() {return height;}
     private boolean hasEntrance = true;
     private boolean hasExit = true;
     private String title;
     private String author;
     private Date created;
     private Date modified;
-    public String windowName;
-
-    public String getWindowName() {
-        return windowName;
-    }
-
+    public String windowName; public String getWindowName() {return windowName;}
     public int[][] gridArray;
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
+    /**
+     * object contains applicable information of each maze (e.g. id, dimensions, date)
+     * @param width number of columns
+     * @param height number of rows
+     * @param title maze title
+     * @param author maze author
+     */
     public Maze(int width, int height, String title, String author) {
         this.id = 1;
         this.width = width;
@@ -42,18 +34,13 @@ public class Maze extends JFrame {
         this.title = title;
         this.author = author;
         this.gridArray = new int[height][width];
-        if (this.created == null) {
-            this.created = new Date();
-        }
+        if (this.created == null) {this.created = new Date();}
         this.modified = new Date();
-        SimpleDateFormat dt = new SimpleDateFormat("dd/MM HH:mm"); //https://stackabuse.com/how-to-get-current-date-and-time-in-java/
+        SimpleDateFormat dt = new SimpleDateFormat("dd/MM HH:mm");
         this.windowName = MessageFormat.format("{0} | {1} by {2} (Created: {3}, Last Modified: {4})",
                 String.format("%03d", id), title, author, dt.format(created), dt.format(modified));
         // this.gridArray = abc;
     }
-
-
-    // todo: object for creating 2d array
 
     /**
      * For a grid with dimensions of a given width and height, given a particular cell within the grid return a shuffled
@@ -183,10 +170,8 @@ public class Maze extends JFrame {
                 gridArray[height-4][width-4]=1;
                 gridArray[height-5][width-4]=1;
                 gridArray[height-4][width-5]=1;
-
             }
         }
-
             if (logos != null) {
                 try {
                 int buffer = 0;
@@ -242,8 +227,6 @@ public class Maze extends JFrame {
                             width, height));
                 }
         }
-
-
             while (!nodes.empty()) {
                 Point currentCell = nodes.pop();
                 ArrayList<Point> neighbours = getRandomNeighbours(currentCell, widthThin, heightThin);
@@ -294,7 +277,6 @@ public class Maze extends JFrame {
                 gridArray[0][1] = 2; //Add entrance
                 gridArray[height - 1][width - 2] = 3; //Add exit
             }
-
     }
 
     /**
@@ -346,6 +328,7 @@ public class Maze extends JFrame {
         }
         return ((double) (solution.size()-2)/numCells)*100;
     }
+
     public void drawSolution(){
         Point startPoint = null;
         Point endPoint = null;
@@ -370,6 +353,7 @@ public class Maze extends JFrame {
             }
         }
     }
+
     public void hideSolution() {
         for (int row = 1; row != height - 1; ++row) {
             for (int column = 1; column != width - 1; ++column) {
@@ -402,7 +386,6 @@ public class Maze extends JFrame {
                     gridArray[row][column] = 3;
                     hasExit =true;
                 }
-
             }
             else {
                 if (gridArray[row][column] == 0) {
@@ -414,4 +397,3 @@ public class Maze extends JFrame {
         }
     }
 }
-

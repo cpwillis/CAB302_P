@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.io.File;
 
 public class GUI extends JFrame implements ActionListener {
-
     public static final int width = 800;
     public static final int height = 700;
     JMenuItem mNew, mOpen, mSave, mExit, mImport, mHowTo, mAbout;
@@ -58,6 +57,8 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     private void createMaze() {
+        //todo: manual/automatic generation, size (small, large, custom)
+
         JDialog MazeDialogue = new JDialog();
         MazeDialogue.setLayout(new GridBagLayout());
         MazeDialogue.setSize(200,200);
@@ -83,7 +84,6 @@ public class GUI extends JFrame implements ActionListener {
         c.weightx = 0.0; c.gridwidth = 3; c.gridx = 0; c.gridy = i;
         MazeDialogue.add(submit, c);
         submit.addActionListener(e -> {
-            //todo: use values from dialogue to generate maze
             System.out.println(mazeInputs[0].getText());
             int mazeWidth = Integer.parseInt(mazeInputs[1].getText());
             int mazeHeight = Integer.parseInt(mazeInputs[2].getText());
@@ -103,8 +103,6 @@ public class GUI extends JFrame implements ActionListener {
         slaveWindow.add(new DrawMaze(currentMaze, true,slaveWindow));
         masterWindow.getContentPane().add(slaveWindow);
         masterWindow.revalidate();
-
-
     }
 
     @Override public void actionPerformed(ActionEvent e) {
@@ -116,9 +114,7 @@ public class GUI extends JFrame implements ActionListener {
         if (e.getSource() == mImport) { } // start and finish images
         if (e.getSource() == mHowTo) { } // what it does/how
         if (e.getSource() == mAbout) { } // project name/course/year, team members
-
     }
-
 
     public void run() {
         initFrame();

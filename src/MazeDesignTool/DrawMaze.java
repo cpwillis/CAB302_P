@@ -1,7 +1,6 @@
 package MazeDesignTool;
 
 import javax.swing.*;
-import javax.swing.event.InternalFrameListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,11 +35,8 @@ public class DrawMaze extends Component implements ActionListener{
                        " that are reached in a solution: %.2f%%",percentDeadEnds,percentCellsInSolution);
                 JOptionPane.showMessageDialog(null, message, "Maze Information",
                         JOptionPane.INFORMATION_MESSAGE);
-
            }
         }
-
-
     }
 
     public DrawMaze(Maze maze, boolean generateRandomMaze, JInternalFrame window){
@@ -57,7 +53,6 @@ public class DrawMaze extends Component implements ActionListener{
         }
         catch (Exception e){}
 
-
         window.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -72,10 +67,6 @@ public class DrawMaze extends Component implements ActionListener{
             }
         });
     }
-
-
-
-
 
     public void paint(Graphics g){
         int[][] gridArray =maze.gridArray;
@@ -103,4 +94,3 @@ public class DrawMaze extends Component implements ActionListener{
         }
     }
 }
-

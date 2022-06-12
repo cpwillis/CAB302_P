@@ -105,4 +105,3 @@ public class DB implements MazeDataSource {
         }
     }
 }
-
