@@ -284,18 +284,15 @@ public class Maze extends JFrame {
      * path cells in the encoded in gridArray as a percentage.
      */
     public double percentDeadEndCells() {
-        //Loop over interior cells of maze
         int numDeadEndCells = 0;
         int numCells=0;
         for (int row = 1; row != height - 1; ++row) {
             for (int column = 1; column != width - 1; ++column) {
                 if ((gridArray[row + 1][column] == 1 ? 1 : 0) + (gridArray[row - 1][column] == 1 ? 1 : 0) +
                         (gridArray[row][column + 1] == 1 ? 1 : 0) + (gridArray[row][column - 1] == 1 ? 1 : 0) >= 3) {
-                    ++numDeadEndCells;
+                        ++numDeadEndCells;
                 }
-                if(gridArray[row][column]==0){
-                    ++numCells;
-                }
+                if ((gridArray[row][column] == 0) || (gridArray[row][column] == 4)) {++numCells;}
             }
         }
         return ((double) numDeadEndCells / (numCells))*100;
@@ -315,14 +312,15 @@ public class Maze extends JFrame {
     public double percentCellsReachedInSolution() {
         List<Point> solution = generateSolution(new Point(0, 1), new Point(height - 1, width - 2));
         int numCells = 0;
+        int emptyCells = 0;
         for (int row = 1; row != height - 1; ++row) {
             for (int column = 1; column != width - 1; ++column) {
-                if (gridArray[row][column] == 0) {
-                    ++numCells;
-                }
+                if (gridArray[row][column] == 0) { ++emptyCells; }
+                if ((gridArray[row][column] == 0) || (gridArray[row][column] == 4)) {++numCells;}
             }
         }
-        return ((double) (solution.size()-2)/numCells)*100;
+        if (emptyCells == numCells) {return 0;}
+        else {return ((double) (solution.size()-2)/numCells)*100;}
     }
 
     public void drawSolution(){
@@ -345,7 +343,7 @@ public class Maze extends JFrame {
         }
         if(path!=null){
             for(int i =1; i!=path.size()-1;++i){
-                    gridArray[path.get(i).x][path.get(i).y] = 2;
+                    gridArray[path.get(i).x][path.get(i).y] = 4;
             }
         }
     }
@@ -353,7 +351,7 @@ public class Maze extends JFrame {
     public void hideSolution() {
         for (int row = 1; row != height - 1; ++row) {
             for (int column = 1; column != width - 1; ++column) {
-                if (gridArray[row][column] == 2) {
+                if (gridArray[row][column] == 4) {
                     gridArray[row][column] = 0;
                 }
             }
@@ -361,7 +359,6 @@ public class Maze extends JFrame {
     }
 
     public void updateMaze(int x, int y){
-        //System.out.println(String.format("%d, %d", x,y));
         int row = (int)Math.floor((double)y/30)-1;
         int column = (int)Math.floor((double)x/30);
         if(row<=height && column<=width) {

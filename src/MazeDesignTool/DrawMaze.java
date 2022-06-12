@@ -10,33 +10,31 @@ import java.awt.event.MouseEvent;
 public class DrawMaze extends Component implements ActionListener{
     Maze maze;
     final JPopupMenu menu = new JPopupMenu("Menu");
-    final JMenuItem  genSol = new JMenuItem ("Generate Solution");
+    final JMenuItem  genSol = new JMenuItem ("Show/Hide Solution");
     final JMenuItem  percentDeadEnds = new JMenuItem ("Maze Information");
     JInternalFrame window;
-    boolean showingSolution =false;
+    boolean showingSolution = false;
 
     class PopupActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if(e.getActionCommand().equals("Generate Solution")){
-               if(showingSolution){
-                   showingSolution = false;
-                   maze.hideSolution();
-               }
-               else{
-                   showingSolution = true;
-                   maze.drawSolution();
-               }
-               window.repaint();
-           }
-           else if(e.getActionCommand().equals("Maze Information")){
-               double percentDeadEnds = maze.percentDeadEndCells();
-               double percentCellsInSolution = maze.percentCellsReachedInSolution();
-               String message = String.format("Percentage of cells that are dead ends: %.2f%%\nPercentage of cells" +
-                       " that are reached in a solution: %.2f%%",percentDeadEnds,percentCellsInSolution);
-                JOptionPane.showMessageDialog(null, message, "Maze Information",
-                        JOptionPane.INFORMATION_MESSAGE);
-           }
+            if(e.getActionCommand().equals("Show/Hide Solution")){viewSolution();}
+            else if(e.getActionCommand().equals("Maze Information")){viewMetrics();}
         }
+    }
+
+    public void viewMetrics() {
+        double percentDeadEnds = maze.percentDeadEndCells();
+        double percentCellsInSolution = maze.percentCellsReachedInSolution();
+        String message = String.format("Percentage of cells that are dead ends: %.2f%%\n" +
+                                        "Percentage of cells that are reached in a solution: %.2f%%",
+                                        percentDeadEnds, percentCellsInSolution);
+        JOptionPane.showMessageDialog(null, message, "Maze Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void viewSolution() {
+        if(showingSolution) {showingSolution = false; maze.hideSolution();}
+        else{showingSolution = true; maze.drawSolution();}
+        window.repaint();
     }
 
     public DrawMaze(Maze maze, boolean generateRandomMaze, JInternalFrame window){
@@ -48,10 +46,8 @@ public class DrawMaze extends Component implements ActionListener{
         percentDeadEnds.addActionListener(actionListener);
         this.maze = maze;
         this.window = window;
-        try {
-            maze.generateRandomMaze(false, null);
-        }
-        catch (Exception e){}
+        try {maze.generateRandomMaze(false, null);}
+        catch (Exception ignored){}
 
         window.addMouseListener(new MouseAdapter() {
             @Override
@@ -69,15 +65,16 @@ public class DrawMaze extends Component implements ActionListener{
     }
 
     public void paint(Graphics g){
-        int[][] gridArray =maze.gridArray;
+        int[][] gridArray = maze.gridArray;
         super.paint(g);
         for (int row = 0; row < gridArray.length; row++) {
             for (int col = 0; col < gridArray[0].length; col++) {
                 Color color = switch (gridArray[row][col]) {
-                    case 1 -> Color.BLACK;
-                    case 2 -> Color.PINK;
-                    case 3 -> Color.GREEN;
-                    default -> Color.WHITE;
+                    case 1 -> Color.BLACK;      // wall
+                    case 2 -> Color.PINK;       // start
+                    case 3 -> Color.GREEN;      // end
+                    case 4 -> Color.LIGHT_GRAY; // solution
+                    default -> Color.WHITE;     // empty
                 };
                 g.setColor(color);
                 g.fillRect(30 * col, 30 * row, 30, 30);
