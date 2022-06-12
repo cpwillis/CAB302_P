@@ -8,15 +8,12 @@ import java.util.*;
 import java.util.List;
 
 public class Maze extends JFrame {
-    private int id;
-    private int width; public int getWidth() {return width;}
-    private int height; public int getHeight() {return height;}
+    int id = 1;
+    private final int width; //public int getMazeWidth() {return width;}
+    private final int height; //public int getMazeHeight() {return height;}
     private boolean hasEntrance = true;
     private boolean hasExit = true;
-    private String title;
-    private String author;
     private Date created;
-    private Date modified;
     public String windowName; public String getWindowName() {return windowName;}
     public int[][] gridArray;
 
@@ -28,18 +25,17 @@ public class Maze extends JFrame {
      * @param author maze author
      */
     public Maze(int width, int height, String title, String author) {
-        this.id = 1;
+
         this.width = width;
         this.height = height;
-        this.title = title;
-        this.author = author;
         this.gridArray = new int[height][width];
         if (this.created == null) {this.created = new Date();}
-        this.modified = new Date();
+        Date modified = new Date();
         SimpleDateFormat dt = new SimpleDateFormat("dd/MM HH:mm");
         this.windowName = MessageFormat.format("{0} | {1} by {2} (Created: {3}, Last Modified: {4})",
                 String.format("%03d", id), title, author, dt.format(created), dt.format(modified));
         // this.gridArray = abc;
+        id++;
     }
 
     /**
@@ -179,13 +175,13 @@ public class Maze extends JFrame {
                     buffer = 1;
                 }
                 int totalRowLength = 0;
-                int totalColumnLength = 0;
+//                int totalColumnLength = 0;
                 for (Point logo : logos) {
                     if (logo.x % 2 != 0 || logo.y % 2 != 0) {
                         throw new MazeCreationException("Logo dimensions must be odd.");
                     }
                     totalRowLength += (int) Math.ceil((double) logo.x / 2);
-                    totalColumnLength += (int) Math.ceil((double) logo.y / 2);
+//                    totalColumnLength += (int) Math.ceil((double) logo.y / 2);
                 }
                 if (totalRowLength >= (widthThin * heightThin - 3 * logos.size())) {
                     throw new MazeCreationException(String.format("Dimension of logo(s) does not fit into a maze of" +
