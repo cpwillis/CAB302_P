@@ -15,7 +15,7 @@ public class DBConnection {
         Properties props = new Properties();
         FileInputStream in = null;
         try{
-            in = new FileInputStream("./db.props");
+            in = new FileInputStream("tst/db.props");
             props.load(in);
             in.close();
 
@@ -35,7 +35,6 @@ public class DBConnection {
             ex.printStackTrace();
         }
     }
-
     public static Connection getInstance(){
         if(instance == null){
             new DBConnection();

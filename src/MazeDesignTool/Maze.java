@@ -13,10 +13,42 @@ public class Maze extends JFrame {
     private final int height; //public int getMazeHeight() {return height;}
     private boolean hasEntrance = true;
     private boolean hasExit = true;
+    private String title;
+    private String author;
     private Date created;
+    private Date modified;
     public String windowName; public String getWindowName() {return windowName;}
     public int[][] gridArray;
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getName(){return title;}
+
+    public String getAuthor(){return author;}
+
+    public String getCreated(){return DateToString(created);}
+
+    public String getModified(){return DateToString(modified);}
+
+    public void setName(String name){this.title = title;}
+
+    public void setAuthor(String author){this.author = author;}
+
+    public void setCreated(){String created = DateToString(this.created);}
+
+    public void setModified(){String modda = DateToString(modified);}
+
+        public String DateToString(Date date){
+            SimpleDateFormat dt = new SimpleDateFormat("dd/MM HH mm");
+            String truedate = dt.format(date);
+            return truedate;
+        }
     /**
      * object contains applicable information of each maze (e.g. id, dimensions, date)
      * @param width number of columns
@@ -28,9 +60,11 @@ public class Maze extends JFrame {
 
         this.width = width;
         this.height = height;
+        this.title = title;
+        this.author = author;
         this.gridArray = new int[height][width];
         if (this.created == null) {this.created = new Date();}
-        Date modified = new Date();
+        this.modified = new Date();
         SimpleDateFormat dt = new SimpleDateFormat("dd/MM HH:mm");
         this.windowName = MessageFormat.format("{0} | {1} by {2} (Created: {3}, Last Modified: {4})",
                 String.format("%03d", id), title, author, dt.format(created), dt.format(modified));

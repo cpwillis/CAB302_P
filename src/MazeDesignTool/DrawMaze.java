@@ -1,25 +1,38 @@
 package MazeDesignTool;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class DrawMaze extends Component implements ActionListener{
     Maze maze;
     final JPopupMenu menu = new JPopupMenu("Menu");
+    final JMenuItem  saveMaze= new JMenuItem ("Save Maze");
     final JMenuItem  genSol = new JMenuItem ("Show/Hide Solution");
     final JMenuItem  percentDeadEnds = new JMenuItem ("Maze Information");
     JInternalFrame window;
     boolean showingSolution = false;
+    DB data;
 
     class PopupActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if(e.getActionCommand().equals("Show/Hide Solution")){viewSolution();}
             else if(e.getActionCommand().equals("Maze Information")){viewMetrics();}
+            else if(e.getActionCommand().equals("Save Maze")){
+                try {
+                    data.addMaze(maze);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
+
     }
 
     public void viewMetrics() {
@@ -38,12 +51,15 @@ public class DrawMaze extends Component implements ActionListener{
     }
 
     public DrawMaze(Maze maze, boolean generateRandomMaze, JInternalFrame window){
+        data = new DB();
         menu.add(genSol);
         menu.add(percentDeadEnds);
+        menu.add(saveMaze);
         window.add(menu);
         ActionListener actionListener = new PopupActionListener();
         genSol.addActionListener(actionListener);
         percentDeadEnds.addActionListener(actionListener);
+        saveMaze.addActionListener(actionListener);
         this.maze = maze;
         this.window = window;
         try {maze.generateRandomMaze(false, null);}

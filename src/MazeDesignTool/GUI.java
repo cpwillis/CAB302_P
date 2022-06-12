@@ -67,7 +67,13 @@ public class GUI extends JFrame implements ActionListener {
         fileDirectory.setCurrentDirectory(new File(System.getProperty("user.home")));
         fileDirectory.showOpenDialog(this);
     }
-
+    public void openDatabase() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MazeDatabaseUI();
+            }
+        });
+    }
     /**
      * maze creation dialogue
      */
@@ -147,8 +153,8 @@ public class GUI extends JFrame implements ActionListener {
     @Override public void actionPerformed(ActionEvent e) {
         //todo: menubar actions
         if (e.getSource() == mNew)      { createMaze(); }
-        if (e.getSource() == mOpen)     { } //database
-        if (e.getSource() == mSave)     { } //database
+        if (e.getSource() == mOpen)     { openDatabase();} //database
+        if (e.getSource() == mSave)     { openDatabase();} //database
         if (e.getSource() == mExit)     { System.exit(0); }
         if (e.getSource() == mImport)   { fileDirectory(); } // start and finish images
         //if (e.getSource() == mSolution) { DrawMaze.viewSolution(); } // show and hide solution
